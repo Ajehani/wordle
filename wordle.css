@@ -1,0 +1,49 @@
+html{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+h1{
+    text-align: center;
+}
+#grid{
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    grid-template-rows: repeat(6,1fr);
+    height: 50%;
+    width: 30%;
+    margin: 0 auto 2rem auto;
+}
+.slots{
+    border: 1px solid black;
+    padding: 2rem;
+}
+#keyboard {
+    display:grid;
+    margin : auto;
+    grid-template-rows: repeat(3,1fr);
+    gap : 1rem;
+    width : 50%;
+}
+#firstRow{
+    display:grid;
+    grid-template-columns: repeat(10,1fr);
+    gap: 1rem;
+}
+#secondRow{
+    display:grid;
+    margin: 0 10% 0 10%;
+    grid-template-columns: repeat(9,1fr);
+    gap: 1rem;
+}
+#thirdRow{
+    display:grid;
+    grid-template-columns: repeat(9,1fr);
+    gap: 1rem;
+}
+.charcs{
+    border: 1px solid black;
+    padding: 1rem;
+    color:black;
+    background-color: rgb(221, 216, 216);
+    height: 1rem;
+    text-align: center;
+}
