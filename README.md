@@ -1,1 +1,1 @@
-checkout here [https://ajehani.github.io/wordle/]
+check it out here [https://ajehani.github.io/wordle/]
