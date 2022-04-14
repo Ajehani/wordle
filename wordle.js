@@ -12945,7 +12945,7 @@ geums
 grits
 kames
 death`.split("\n").map(el => el.toUpperCase());
-
+//figure out import, put in webpack if you have to
 const layout = document.querySelector("#layout");
 layout.innerHTML += `<div id="grid"></div><div id="keyboard"></div>`;
 let current = 0;
@@ -12972,69 +12972,82 @@ console.log(chosen);
         else{document.querySelector("#thirdRow").innerHTML += `<div class="charcs" id="backspace">${keys[i]}</div>`;}
     }
 })();
-
 (function addEvents(){
     const box = [...document.querySelectorAll(".slots")];
-    const process = () => {
-        let selection = [box[current-5], box[current-4], box[current-3] , box[current-2] , box[current-1]];
-        if(current % 5 == 0 && current > 0){
-            if(wordList.includes(selection.map(el=>el.textContent).join(""))){
-                row +=1;
-                console.log(selection.map(el=>el.textContent).join(""))
-                let deepCop = [...chosen];
-                entered = true;
-                if(selection.every((el,ind)=> el.textContent === deepCop[ind])){
-                    selection.forEach(el=>el.style.backgroundColor = "green")
-                    alert("you got the word");
-                } 
-                 //if not in
-                 selection.forEach(el=>{
-                    if(!chosen.includes(el.textContent)) document.querySelector(`#${el.textContent}`).style.backgroundColor = "blue";
-                })
-                selection.forEach((el,ind)=>{
-                    if(selection[ind].textContent === deepCop[ind]){
-                        el.style.backgroundColor = "green";
-                        document.querySelector(`#${el.textContent}`).style.backgroundColor = "green";
-                        deepCop.splice(ind,1,"");
-                    }
-                }) 
-                selection.forEach(el => {
-                    if(deepCop.includes(el.textContent) && window.getComputedStyle(el).backgroundColor !== "rgb(0, 128, 0)"){
-                    // if(deepCop.includes(el.textContent)){ //i dont know if this works
-                        // console.log(window.getComputedStyle(el).backgroundColor);
-                        el.style.backgroundColor = "orange";
-                        window.getComputedStyle(document.querySelector(`#${el.textContent}`)).backgroundColor ==="rgb(0, 128, 0)" ? {} : document.querySelector(`#${el.textContent}`).style.backgroundColor = "orange";
-                        deepCop.splice(deepCop.indexOf(el),1);
-                    }
-                });
-               
-            }
-        }   
-} 
-    document.querySelector("#backspace").addEventListener('click', () => {
-        if(current > 0){
-            console.log(row,current);
-            if(current >= row * 5 + 1){
-                current -= 1;
-                box[current].textContent = "";
-            }
-        }
-    });
-    document.querySelector("#enter").addEventListener('click',process);
-    document.querySelectorAll(".letters").forEach(el => el.addEventListener('click', e => {
-        if(current < 30){
+    let alreadyProcessed = [];
+    const add = (e) => {
+        if(current <= 30){
             if(current > 0 && current % 5 === 0 && !entered){
-                console.log("your reasoning is invalid")
+                console.log("your reasoning is invalid");
                 process();
-            }
-            else{
-                box[current].textContent = el.textContent;
+            } else{
+                box[current].textContent = e.target.textContent;
                 current += 1;
                 entered = false;
             }
         } else { 
             alert("refresh page until i add a replay button");
+            document.querySelector("#enter").removeEventListener('click',process)
+            document.querySelectorAll(".letters").forEach(el => el.removeEventListener('click', add));
         }
-    }));
+        console.log(current)
+    };
+    const process = () => {
+        let selection = [box[current-5], box[current-4], box[current-3] , box[current-2] , box[current-1]];
+        if(current % 5 === 0 && current > 0){
+            if(wordList.includes(selection.map(el=>el.textContent).join(""))){
+                entered = true;
+                if(!alreadyProcessed.includes(selection.map(el=>el.textContent).join(""))){
+                    alreadyProcessed.push(selection.map(el=>el.textContent).join(""));
+                    row +=1;
+                    console.log(selection.map(el=>el.textContent).join(""))
+                    let deepCop = [...chosen];
+                    if(selection.every((el,ind)=> el.textContent === deepCop[ind])){
+                        selection.forEach(el=>el.style.backgroundColor = "green")
+                        alert("you got the word");
+                        document.querySelector("#enter").removeEventListener('click',process)
+                        document.querySelectorAll(".letters").forEach(el => el.removeEventListener('click', add));
+                    } 
+                    selection.forEach(el=>{
+                        if(!chosen.includes(el.textContent)) document.querySelector(`#${el.textContent}`).style.backgroundColor = "gray";
+                    })
+                    selection.forEach((el,ind)=>{
+                        if(selection[ind].textContent === deepCop[ind]){
+                            el.style.backgroundColor = "green";
+                            document.querySelector(`#${el.textContent}`).style.backgroundColor = "green";
+                            deepCop.splice(ind,1,"");
+                        }
+                    }) 
+                    selection.forEach(el => { //figure this line out
+                        if(deepCop.includes(el.textContent) && window.getComputedStyle(el).backgroundColor !== "rgb(0, 128, 0)"){
+                        // if(deepCop.includes(el.textContent)){ //i dont know if this works
+                            // console.log(window.getComputedStyle(el).backgroundColor);
+                            el.style.backgroundColor = "orange";
+                            window.getComputedStyle(document.querySelector(`#${el.textContent}`)).backgroundColor ==="rgb(0, 128, 0)" ? {} : document.querySelector(`#${el.textContent}`).style.backgroundColor = "orange";
+                            deepCop.splice(deepCop.indexOf(el),1);
+                        }
+                    });
+                 }
+            }
+        }   
+} 
+    document.querySelector("#backspace").addEventListener('click', () => {
+        if(current > 0){
+            if(current >= row * 5 + 1){
+                if(current % 5 === 1){
+                    box[current-1].textContent = "";
+                    current-=1;
+                    // current = row * 5 + 1;
+                    console.log("currently is: "+current)
+                } else{
+                    current -= 1;
+                    box[current].textContent = "";
+                }
+            }
+            console.log(row,current);
+        }
+    });
+    document.querySelector("#enter").addEventListener('click',process);
+    document.querySelectorAll(".letters").forEach(el => el.addEventListener('click', add));
     //add some keyup events to the body
 })();
